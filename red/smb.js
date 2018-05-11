@@ -34,14 +34,22 @@ module.exports = function (RED) {
             done();
         });
 
-        self.smbClient = new SMB({
-            share: self.share,
-            //share: "\\\\192.168.15.6\\File_Teste",
-            domain: self.domain,
-            username: self.username,
-            password: self.password,
-            autoCloseTimeout: 0
-        });
+        function connect (){
+            
+            if(self.smbClient){
+                self.smbClient.close();
+            }            
+            
+            self.smbClient = new SMB({
+                share: self.share,
+                domain: self.domain,
+                username: self.username,
+                password: self.password,
+                autoCloseTimeout: 0
+            });
+        }
+
+        connect();
 
         if (!self.smbClient) {
             self.error("Error smbClient not available");
@@ -49,8 +57,6 @@ module.exports = function (RED) {
         }
 
         self.readDir = function readDir(path, callback) {
-            console.log("ReadDir");
-
             let readdir = self.smbClient.readdir(path);
 
             readdir.then((data) => {
@@ -59,6 +65,7 @@ module.exports = function (RED) {
 
             readdir.catch((err) => {
                 callback(err);
+                connect();
             });
         };
 
@@ -71,6 +78,7 @@ module.exports = function (RED) {
 
             readFile.catch((err) => {
                 callback(err);
+                connect();
             });
         };
 
@@ -84,6 +92,7 @@ module.exports = function (RED) {
             
             unlink.catch((err) => {
                 callback(err);
+                connect();
             });
 
         };
@@ -98,6 +107,7 @@ module.exports = function (RED) {
 
             rename.catch((err) => {
                 callback(err);
+                connect();
             });
         };
 
@@ -126,7 +136,6 @@ module.exports = function (RED) {
             switch (node.operation) {
                 
                 case "read-dir":
-                    console.log("ReadDir");
                     node.config.readDir(node.path, (err, files) => {
                         if(err){
                             node.error(err);
@@ -140,7 +149,6 @@ module.exports = function (RED) {
                     break;
 
                 case "read-file":
-                    console.log("ReadFile");
                     node.config.readFile(node.path, (err, data) => {
                         if(err){
                             node.error(err);
@@ -154,7 +162,6 @@ module.exports = function (RED) {
                     break;
 
                 case "unlink":
-                    console.log("Unlink");
                     node.config.unlink(node.path, (err) => {
                         if(err){
                             node.error(err);
@@ -167,7 +174,6 @@ module.exports = function (RED) {
                     break;
 
                 case "rename":
-                    console.log("Rename");
                     node.config.rename(node.path, node.newPath, (err) =>{
                         if(err){
                             node.error(err);
