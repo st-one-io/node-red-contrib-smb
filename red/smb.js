@@ -27,38 +27,78 @@ module.exports = function (RED) {
         self.domain = values.domain;
         self.username = values.username;
         self.password = values.password;
+        self.autoCloseTimeout = 0;
 
         self.on("close", (done) => {
             self.smbClient.close();
             done();
         });
 
-        let smbClient = new SMB({
+        self.smbClient = new SMB({
             share: self.share,
+            //share: "\\\\192.168.15.6\\File_Teste",
             domain: self.domain,
             username: self.username,
-            password: self.password
+            password: self.password,
+            autoCloseTimeout: 0
         });
 
-        if (!smbClient) {
+        if (!self.smbClient) {
             self.error("Error smbClient not available");
             return;
         }
 
         self.readDir = function readDir(path, callback) {
-            self.smbClient.readdir(path, "utf8", callback);
+            console.log("ReadDir");
+
+            let readdir = self.smbClient.readdir(path);
+
+            readdir.then((data) => {
+                callback(null, data);
+            });
+
+            readdir.catch((err) => {
+                callback(err);
+            });
         };
 
         self.readFile = function readFile(path, callback) {
-            self.smbClient.readFile(path, callback);
+            let readFile = self.smbClient.readFile(path, {encoding: "utf8"});
+
+            readFile.then((data) => {
+                callback(null, data);
+            });
+
+            readFile.catch((err) => {
+                callback(err);
+            });
         };
 
         self.unlink = function unlink(path, callback) {
-            self.smbClient.unlink(path, callback);
+            
+            let unlink = self.smbClient.unlink(path);
+            
+            unlink.then(() =>{
+                callback(null);
+            });
+            
+            unlink.catch((err) => {
+                callback(err);
+            });
+
         };
 
         self.rename = function rename(oldPath, newPath, callback) {
-            self.smbClient.rename(oldPath, newPath, callback);
+            
+            let rename = self.smbClient.rename(oldPath, newPath);
+
+            rename.then(() => {
+                callback(null);
+            });
+
+            rename.catch((err) => {
+                callback(err);
+            });
         };
 
     }
@@ -84,7 +124,9 @@ module.exports = function (RED) {
         node.on("input", (msg) => {
 
             switch (node.operation) {
+                
                 case "read-dir":
+                    console.log("ReadDir");
                     node.config.readDir(node.path, (err, files) => {
                         if(err){
                             node.error(err);
@@ -98,6 +140,7 @@ module.exports = function (RED) {
                     break;
 
                 case "read-file":
+                    console.log("ReadFile");
                     node.config.readFile(node.path, (err, data) => {
                         if(err){
                             node.error(err);
@@ -111,6 +154,7 @@ module.exports = function (RED) {
                     break;
 
                 case "unlink":
+                    console.log("Unlink");
                     node.config.unlink(node.path, (err) => {
                         if(err){
                             node.error(err);
@@ -123,6 +167,7 @@ module.exports = function (RED) {
                     break;
 
                 case "rename":
+                    console.log("Rename");
                     node.config.rename(node.path, node.newPath, (err) =>{
                         if(err){
                             node.error(err);
