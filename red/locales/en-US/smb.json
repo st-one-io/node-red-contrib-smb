@@ -1,0 +1,21 @@
+{
+    "smb": {
+        "label": {
+            "name": "Name",
+            "share": "Share",
+            "domain": "Domain",
+            "username": "Username",
+            "password": "Password",
+            "config": "Config",
+            "operation": "Operation",
+            "path": "Path",
+            "path-new": "New path"
+        },
+        "operation": {
+            "read-dir": "Read directory",
+            "read-file": "Read file",
+            "unlink": "Remove file",
+            "rename": "Rename / Move file"
+        }
+    }
+}

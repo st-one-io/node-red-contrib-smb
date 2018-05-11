@@ -1,0 +1,190 @@
+lines (691 sloc)  27.1 KB
+<!--
+Copyright 2018 Smart-Tech Controle e Automação
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="SMB">
+
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="smb.label.name"></span>
+        </label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]smb.label.name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-config">
+            <i class="fa fa-cog"></i>
+            <span data-i18n="smb.label.config"></span>
+        </label>
+        <input type="text" id="node-input-config" data-i18n="[placeholder]smb.label.config">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-operation">
+            <i class="fa fa-filter"></i>
+            <span data-i18n="smb.label.operation"></span>
+        </label>
+        <select type="text" id="node-input-operation">
+            <option value="read-dir" data-i18n="smb.operation.read-dir"> </option>
+            <option value="read-file" data-i18n="smb.operation.read-file"> </option>
+            <option value="unlink" data-i18n="smb.operation.unlink"> </option>
+            <option value="rename" data-i18n="smb.operation.rename"> </option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-path">
+            <i class="fa fa-cog"></i>
+            <span data-i18n="smb.label.path"></span>
+        </label>
+        <input type="text" id="node-input-path" data-i18n="[placeholder]smb.label.path">
+    </div>
+
+    <div class="form-row" id="new-path">
+        <label for="node-input-path_new">
+            <i class="fa fa-cog"></i>
+            <span data-i18n="smb.label.path-new"></span>
+        </label>
+        <input type="text" id="node-input-path_new" data-i18n="[placeholder]smb.label.path-new">
+    </div>
+
+
+
+</script>
+
+<script type="text/x-red" data-help-name="SMB">
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('SMB', {
+        category: 'SMB',
+        color: '#FFAAAA',
+        defaults: {
+            name: {
+                value: ""
+            },
+            config: {
+                value: "",
+                type: "smb config"
+            },
+            operation: {
+                value: "read-dir"
+            },
+            path: {
+                value: ""
+            },
+            path_new: {
+                value: ""
+            }
+
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.png",
+        paletteLabel: "SMB",
+        label: function () {
+            
+            if (this.name) {
+                return this.name;
+            }
+
+            
+            
+            return name;
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+</script>
+
+
+
+<!-- CONFIG -->
+
+<script type="text/x-red" data-template-name="smb config">
+
+    <div class="form-row">
+        <label for="node-config-input-name">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="smb.label.name"></span>
+        </label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]smb.label.name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-share">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="smb.label.share"></span>
+        </label>
+        <input type="text" id="node-config-input-share" data-i18n="[placeholder]smb.label.share">
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-domain">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="smb.label.domain"></span>
+        </label>
+        <input type="text" id="node-config-input-domain" data-i18n="[placeholder]smb.label.domain">
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-username">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="smb.label.username"></span>
+        </label>
+        <input type="text" id="node-config-input-username" data-i18n="[placeholder]smb.label.username">
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-password">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="smb.label.password"></span>
+        </label>
+        <input type="password" id="node-config-input-password" data-i18n="[placeholder]smb.label.password">
+    </div>
+
+
+</script>
+
+<script type="text/x-red" data-help-name="smb config">
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("smb config", {
+        category: 'config',
+        color: '#FFAAAA',
+        defaults: {
+            name: {
+                value: ""
+            },
+            share: {
+                value: ""
+            },
+            domain: {
+                value: ""
+            },
+            username: {
+                value: ""
+            },
+            password: {
+                value: ""
+            }
+        },
+        label: function () {
+            return this.name || this.share;
+        }
+    });
+</script>
+
