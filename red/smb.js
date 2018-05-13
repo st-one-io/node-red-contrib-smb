@@ -25,10 +25,10 @@ module.exports = function (RED) {
 
         self.share = values.share;
         self.domain = values.domain;
-        self.username = values.username;
-        self.password = values.password;
+        self.username = self.credentials.username;
+        self.password = self.credentials.password;
         self.autoCloseTimeout = 0;
-
+   
         self.on("close", (done) => {
             self.smbClient.close();
             done();
@@ -112,7 +112,12 @@ module.exports = function (RED) {
         };
 
     }
-    RED.nodes.registerType("smb config", SmbConfig);
+    RED.nodes.registerType("smb config", SmbConfig, {
+        credentials: {
+            username: {type:"text"},
+            password: {type:"password"}
+        }
+    });
 
     function SmbFunction(values) {
 
