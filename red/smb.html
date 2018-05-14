@@ -1,4 +1,3 @@
-lines (691 sloc)  27.1 KB
 <!--
 Copyright 2018 Smart-Tech Controle e Automação
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +31,7 @@ limitations under the License.
 
     <div class="form-row">
         <label for="node-input-operation">
-            <i class="fa fa-filter"></i>
+            <i class="fa fa-bars"></i>
             <span data-i18n="smb.label.operation"></span>
         </label>
         <select type="text" id="node-input-operation">
@@ -45,7 +44,7 @@ limitations under the License.
 
     <div class="form-row">
         <label for="node-input-path">
-            <i class="fa fa-cog"></i>
+            <i class="fa fa-folder-open"></i>
             <span data-i18n="smb.label.path"></span>
         </label>
         <input type="text" id="node-input-path" data-i18n="[placeholder]smb.label.path">
@@ -53,23 +52,72 @@ limitations under the License.
 
     <div class="form-row" id="new-path">
         <label for="node-input-path_new">
-            <i class="fa fa-cog"></i>
+            <i class="fa fa-folder-open"></i>
             <span data-i18n="smb.label.path-new"></span>
         </label>
         <input type="text" id="node-input-path_new" data-i18n="[placeholder]smb.label.path-new">
     </div>
 
-
-
 </script>
 
 <script type="text/x-red" data-help-name="SMB">
+    <p>
+        <b>Node SMB Protocol</b>
+    </p>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string | object</span>
+        </dt>
+        <dd>triggers the action defined in the operation.</dd>
+    </dl>
+
+
+    <h3>Details</h3>
+    <dl class="message-properties">
+        <dt>config
+            <span class="property-type">SMB Config</span>
+        </dt>
+        <dd>the path to operate on.</dd>
+    </dl>
+
+
+    <h3>Operations</h3>
+
+    <dl class="message-properties">
+
+        <dt>Read directory</dt>
+        <dd>this operation return an array of file object.
+            If not set <code>Path</code> in node properties then <code>INPUT: msg.payload</code> is used as Path.
+        </dd>
+
+        <dt>Read file</dt>
+        <dd>
+            this operation return a string with content of file.
+            If not set <code>Path</code> in node properties, then <code>INPUT: msg.payload</code> is used as Path.
+        </dd>
+
+        <dt>Remove file</dt>
+        <dd>
+            this operation remove file.
+            If not set <code>Path</code> in node properties then <code>INPUT: msg.payload</code> is used as Path.
+        </dd>
+
+        <dt>Rename/Move file</dt>
+        <dd>
+            this operation move or rename file.
+            If not set <code>Path</code> and <code>New path</code> in node properties, then <code>INPUT: msg.payload.currently</code> is used as Path and <code>INPUT: msg.payload.new</code> is used as New Path.
+        </dd>
+
+    </dl>
+
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('SMB', {
-        category: 'SMB',
-        color: '#FFAAAA',
+        category: 'storage',
+        color: '#DEB887',
         defaults: {
             name: {
                 value: ""
@@ -92,7 +140,7 @@ limitations under the License.
         inputs: 1,
         outputs: 1,
         icon: "file.png",
-        paletteLabel: "SMB",
+        paletteLabel: "smb",
         label: function () {
             
             if (this.name) {
@@ -102,12 +150,57 @@ limitations under the License.
             var selectConfig = RED.nodes.node(this.config);
             
             if (selectConfig) {
-                return selectConfig.label() + ": " + this.operation;
+
+                let operation = "";
+
+                switch(this.operation){
+                    case "read-dir":
+                        operation = "Read dir";
+                        break;
+
+                    case "read-file":
+                        operation = "Read file";
+                        break;
+
+                    case "rename": 
+                        operation = "Rename/Move";
+                        break;
+
+                    case "unlink": 
+                        operation = "Remove";
+                        break;
+                }
+
+                return selectConfig.label() + " : " + operation;
             }
 
         },
         labelStyle: function () {
             return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function(){
+            
+            let new_path = $("#new-path");
+            let operation_select = $("#node-input-operation");
+            
+            new_path.hide();
+
+
+
+            if(operation_select.val() == "rename"){
+                new_path.show();
+            }else{
+                new_path.hide();
+            }
+
+            operation_select.change(function(){
+                if(operation_select.val() == "rename"){
+                    new_path.show();
+                }else{
+                    new_path.hide();
+                }
+            });
+
         }
     });
 </script>
@@ -128,7 +221,7 @@ limitations under the License.
 
     <div class="form-row">
         <label for="node-config-input-share">
-            <i class="fa fa-tag"></i>
+            <i class="fa fa-sitemap"></i>
             <span data-i18n="smb.label.share"></span>
         </label>
         <input type="text" id="node-config-input-share" data-i18n="[placeholder]smb.label.share">
@@ -136,7 +229,7 @@ limitations under the License.
 
     <div class="form-row">
         <label for="node-config-input-domain">
-            <i class="fa fa-tag"></i>
+            <i class="fa fa-globe"></i>
             <span data-i18n="smb.label.domain"></span>
         </label>
         <input type="text" id="node-config-input-domain" data-i18n="[placeholder]smb.label.domain">
@@ -144,7 +237,7 @@ limitations under the License.
 
     <div class="form-row">
         <label for="node-config-input-username">
-            <i class="fa fa-tag"></i>
+            <i class="fa fa-user"></i>
             <span data-i18n="smb.label.username"></span>
         </label>
         <input type="text" id="node-config-input-username" data-i18n="[placeholder]smb.label.username">
@@ -152,7 +245,7 @@ limitations under the License.
 
     <div class="form-row">
         <label for="node-config-input-password">
-            <i class="fa fa-tag"></i>
+            <i class="fa fa-key"></i>
             <span data-i18n="smb.label.password"></span>
         </label>
         <input type="password" id="node-config-input-password" data-i18n="[placeholder]smb.label.password">
@@ -162,6 +255,39 @@ limitations under the License.
 </script>
 
 <script type="text/x-red" data-help-name="smb config">
+    <p>
+        <b>Node SMB Protocol</b>
+    </p>
+
+    <h3>Details</h3>
+
+    <dl class="message-properties">
+        <dt>Share
+            <span class="property-type">string</span>
+        </dt>
+        <dd>define the path sharing.</dd>
+    </dl>
+
+    <dl class="message-properties">
+        <dt>Domain
+            <span class="property-type">string</span>
+        </dt>
+        <dd>define the domain for authentication.</dd>
+    </dl>
+
+    <dl class="message-properties">
+        <dt>Username
+            <span class="property-type">string</span>
+        </dt>
+        <dd>define the username for authentication.</dd>
+    </dl>
+
+    <dl class="message-properties">
+        <dt>Password
+            <span class="property-type">string</span>
+        </dt>
+        <dd>define the password for authentication.</dd>
+    </dl>
 </script>
 
 <script type="text/javascript">
