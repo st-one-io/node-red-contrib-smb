@@ -24,7 +24,7 @@ module.exports = function (RED) {
         RED.nodes.createNode(self, values);
 
         self.share = values.share;
-        self.domain = values.domain;
+        self.domain = values.domain || ".";
         self.username = self.credentials.username;
         self.password = self.credentials.password;
         self.autoCloseTimeout = 0;
@@ -138,10 +138,13 @@ module.exports = function (RED) {
 
         node.on("input", (msg) => {
 
+            let path = node.path || msg.payload;
+
             switch (node.operation) {
                 
                 case "read-dir":
-                    node.config.readDir(node.path, (err, files) => {
+
+                    node.config.readDir(path, (err, files) => {
                         if(err){
                             node.error(err);
                             return;
@@ -154,7 +157,8 @@ module.exports = function (RED) {
                     break;
 
                 case "read-file":
-                    node.config.readFile(node.path, (err, data) => {
+
+                    node.config.readFile(path, (err, data) => {
                         if(err){
                             node.error(err);
                             return;
@@ -167,7 +171,8 @@ module.exports = function (RED) {
                     break;
 
                 case "unlink":
-                    node.config.unlink(node.path, (err) => {
+
+                    node.config.unlink(path, (err) => {
                         if(err){
                             node.error(err);
                             return;
@@ -179,7 +184,10 @@ module.exports = function (RED) {
                     break;
 
                 case "rename":
-                    node.config.rename(node.path, node.newPath, (err) =>{
+
+                    let obj = msg.payload;
+
+                    node.config.rename(obj.currently, obj.new, (err) =>{
                         if(err){
                             node.error(err);
                             return;
