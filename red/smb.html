@@ -39,6 +39,7 @@ limitations under the License.
             <option value="read-file" data-i18n="smb.operation.read-file"> </option>
             <option value="unlink" data-i18n="smb.operation.unlink"> </option>
             <option value="rename" data-i18n="smb.operation.rename"> </option>
+            <option value="create" data-i18n="smb.operation.create"> </option>
         </select>
     </div>
 
@@ -110,6 +111,12 @@ limitations under the License.
             If not set <code>Path</code> and <code>New path</code> in node properties, then <code>INPUT: msg.payload.currently</code> is used as Path and <code>INPUT: msg.payload.new</code> is used as New Path.
         </dd>
 
+        <dt>Create file</dt>
+        <dd>
+            this operation create new file.
+            If not set <code>Path</code> in node properties, then <code>INPUT: msg.payload.fileName</code> is used as Path and <code>INPUT: msg.payload.data</code> is content of file.
+        </dd>
+
     </dl>
 
 </script>
@@ -169,6 +176,10 @@ limitations under the License.
                     case "unlink": 
                         operation = "Remove";
                         break;
+
+                    case "create": 
+                        operation = "Create";
+                        break;
                 }
 
                 return selectConfig.label() + " : " + operation;
@@ -185,8 +196,6 @@ limitations under the License.
             
             new_path.hide();
 
-
-
             if(operation_select.val() == "rename"){
                 new_path.show();
             }else{
@@ -194,10 +203,11 @@ limitations under the License.
             }
 
             operation_select.change(function(){
+              
+                new_path.hide();
+                
                 if(operation_select.val() == "rename"){
                     new_path.show();
-                }else{
-                    new_path.hide();
                 }
             });
 

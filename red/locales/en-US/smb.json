@@ -15,7 +15,8 @@
             "read-dir": "Read directory",
             "read-file": "Read file",
             "unlink": "Remove file",
-            "rename": "Rename / Move file"
+            "rename": "Rename / Move file",
+            "create": "Create file"
         }
     }
 }

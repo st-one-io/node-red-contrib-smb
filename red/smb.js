@@ -111,6 +111,20 @@ module.exports = function (RED) {
             });
         };
 
+        self.writeFile = function writeFile(fileName, data, callback){
+
+            let writeFile = self.smbClient.writeFile(fileName, data);
+
+            writeFile.then(() => {
+                callback(null);
+            });
+
+            writeFile.catch((err) => {
+                callback(err);
+                connect();
+            });
+        };
+
     }
     RED.nodes.registerType("smb config", SmbConfig, {
         credentials: {
@@ -178,7 +192,7 @@ module.exports = function (RED) {
                             return;
                         }
 
-                        node.log("Success Remove");
+                        node.send(msg);
                     });
 
                     break;
@@ -193,7 +207,23 @@ module.exports = function (RED) {
                             return;
                         }
 
-                        node.log("Success Rename/Move");
+                        node.send(msg);
+                    });
+
+                    break;
+
+                case "create":
+
+                    let fileName = node.path || msg.payload.fileName;
+                    let data = msg.payload.data;
+
+                    node.config.writeFile(fileName, data, (err) => {
+                        if(err){
+                            node.error(err);
+                            return;
+                        }
+
+                        node.send(msg);
                     });
 
                     break;
