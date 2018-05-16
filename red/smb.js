@@ -205,6 +205,30 @@ module.exports = function (RED) {
             return;
         }
 
+        node.statusProcess = function statusProcess(){
+            node.status({
+                fill: "blue",
+                shape: "dot",
+                text: "process"
+            });
+        };
+
+        node.statusDone = function statusDone(){
+            node.status({
+                fill: "green",
+                shape: "dot",
+                text: "done"
+            });
+        };
+
+        node.statusError = function statusError(){
+            node.status({
+                fill: "red",
+                shape: "dot",
+                text: "error"
+            });
+        };
+
         node.on("input", (msg) => {
 
             let filename = node.path || msg.filename;
@@ -213,13 +237,17 @@ module.exports = function (RED) {
 
                 case "read-dir":
 
+                    node.statusProcess();
+
                     node.config.readDir(filename, (err, files) => {
                         
                         if(err){
+                            node.statusError();
                             node.error(err);
                             return;
                         }
 
+                        node.statusDone();
                         msg.payload = files;
                         node.send(msg);
                     });
@@ -228,13 +256,17 @@ module.exports = function (RED) {
 
                 case "read-file":
 
+                    node.statusProcess();
+
                     node.config.readFile(filename, (err, data) => {
                         
                         if(err){
+                            node.statusError();
                             node.error(err);
                             return;
                         }
 
+                        node.statusDone();
                         msg.payload = data;
                         node.send(msg);
                     });       
@@ -243,13 +275,17 @@ module.exports = function (RED) {
 
                 case "unlink":
 
+                    node.statusProcess();
+
                     node.config.unlink(filename, (err) => {
 
                         if(err){
+                            node.statusError();                            
                             node.error(err);
                             return;
                         }
 
+                        node.statusDone();
                         node.send(msg);
                     });
 
@@ -259,13 +295,17 @@ module.exports = function (RED) {
 
                     let new_filename = msg.new_filename;
 
+                    node.statusProcess();
+
                     node.config.rename(filename, new_filename, (err) =>{
                         
                         if(err){
+                            node.statusError();
                             node.error(err);
                             return;
                         }
 
+                        node.statusDone();
                         node.send(msg);
                     });
 
@@ -274,14 +314,21 @@ module.exports = function (RED) {
                 case "create":
 
                     let data = msg.payload;
+                    
+                    node.statusProcess();
+
+                    console.log("DATA: ", data);
+                    console.log("FILENAME: ", filename);
 
                     node.config.writeFile(filename, data, (err) => {
                         
                         if(err){
+                            node.statusError();
                             node.error(err);
                             return;
                         }
 
+                        node.statusDone();
                         node.send(msg);
                     });
 
@@ -289,13 +336,17 @@ module.exports = function (RED) {
 
                 case "mkdir":
 
+                    node.statusProcess();
+
                     node.config.mkdir(filename, (err) => {
                         
                         if(err){
+                            node.statusError();
                             node.error(err);
                             return;
                         }
 
+                        node.statusDone();
                         node.send(msg);
                     });
 
@@ -303,13 +354,17 @@ module.exports = function (RED) {
 
                 case "rmdir":
 
+                    node.statusProcess();
+
                     node.config.rmdir(filename, (err) => {
                         
                         if(err){
+                            node.statusError();
                             node.error(err);
                             return;
                         }
 
+                        node.statusDone();
                         node.send(msg);
                     });
 
@@ -317,13 +372,17 @@ module.exports = function (RED) {
 
                 case "exists":
 
+                    node.statusProcess();
+
                     node.config.exists(filename, (err) => {
                         
                         if(err){
+                            node.statusError();
                             node.error(err);
                             return;
                         }
 
+                        node.statusDone();
                         node.send(msg);
                     });
 
@@ -331,19 +390,23 @@ module.exports = function (RED) {
 
                 case "ensure-dir":
 
+                    node.statusProcess();
+
                     node.config.ensureDir(filename, (err) => {
                         
                         if(err){
+                            node.statusError();
                             node.error(err);
                             return;
                         }
 
+                        node.statusDone();
                         node.send(msg);
                     });
 
                     break;
             }
-            
+
         });
     }
     RED.nodes.registerType("SMB", SmbFunction);
