@@ -125,6 +125,61 @@ module.exports = function (RED) {
             });
         };
 
+        self.mkdir = function mkdir(path, callback){
+
+            let mkdir = self.smbClient.mkdir(path);
+
+            mkdir.then(() => {
+                callback(null);
+            });
+
+            mkdir.catch((err) => {
+                callback(err);
+                connect();
+            });
+        };
+
+        self.rmdir = function rmdir(path, callback){
+
+            let rmdir = self.smbClient.rmdir(path);
+
+            rmdir.then(() => {
+                callback(null);
+            });
+
+            rmdir.catch((err) => {
+                callback(err);
+                connect();
+            });
+        };
+
+        self.exists = function exists(path, callback){
+
+            let exists = self.smbClient.exists(path);
+
+            exists.then(() => {
+                callback(null);
+            });
+
+            exists.catch((err) => {
+                callback(err);
+                connect();
+            });
+        };
+
+        self.ensureDir = function ensureDir(path, callback){
+
+            let ensureDir = self.smbClient.ensureDir(path);
+
+            ensureDir.then(() => {
+                callback(null);
+            });
+
+            ensureDir.catch((err) => {
+                callback(err);
+                connect();
+            });
+        };
     }
     RED.nodes.registerType("smb config", SmbConfig, {
         credentials: {
@@ -152,13 +207,14 @@ module.exports = function (RED) {
 
         node.on("input", (msg) => {
 
-            let path = node.path || msg.payload;
+            let filename = node.path || msg.filename;
 
             switch (node.operation) {
-                
+
                 case "read-dir":
 
-                    node.config.readDir(path, (err, files) => {
+                    node.config.readDir(filename, (err, files) => {
+                        
                         if(err){
                             node.error(err);
                             return;
@@ -172,7 +228,8 @@ module.exports = function (RED) {
 
                 case "read-file":
 
-                    node.config.readFile(path, (err, data) => {
+                    node.config.readFile(filename, (err, data) => {
+                        
                         if(err){
                             node.error(err);
                             return;
@@ -186,7 +243,8 @@ module.exports = function (RED) {
 
                 case "unlink":
 
-                    node.config.unlink(path, (err) => {
+                    node.config.unlink(filename, (err) => {
+
                         if(err){
                             node.error(err);
                             return;
@@ -199,9 +257,10 @@ module.exports = function (RED) {
 
                 case "rename":
 
-                    let obj = msg.payload;
+                    let new_filename = msg.new_filename;
 
-                    node.config.rename(obj.currently, obj.new, (err) =>{
+                    node.config.rename(filename, new_filename, (err) =>{
+                        
                         if(err){
                             node.error(err);
                             return;
@@ -214,10 +273,66 @@ module.exports = function (RED) {
 
                 case "create":
 
-                    let fileName = node.path || msg.payload.fileName;
-                    let data = msg.payload.data;
+                    let data = msg.payload;
 
-                    node.config.writeFile(fileName, data, (err) => {
+                    node.config.writeFile(filename, data, (err) => {
+                        
+                        if(err){
+                            node.error(err);
+                            return;
+                        }
+
+                        node.send(msg);
+                    });
+
+                    break;
+
+                case "mkdir":
+
+                    node.config.mkdir(filename, (err) => {
+                        
+                        if(err){
+                            node.error(err);
+                            return;
+                        }
+
+                        node.send(msg);
+                    });
+
+                    break;
+
+                case "rmdir":
+
+                    node.config.rmdir(filename, (err) => {
+                        
+                        if(err){
+                            node.error(err);
+                            return;
+                        }
+
+                        node.send(msg);
+                    });
+
+                    break;
+
+                case "exists":
+
+                    node.config.exists(filename, (err) => {
+                        
+                        if(err){
+                            node.error(err);
+                            return;
+                        }
+
+                        node.send(msg);
+                    });
+
+                    break;
+
+                case "ensure-dir":
+
+                    node.config.ensureDir(filename, (err) => {
+                        
                         if(err){
                             node.error(err);
                             return;
@@ -228,10 +343,8 @@ module.exports = function (RED) {
 
                     break;
             }
+            
         });
-
-
     }
     RED.nodes.registerType("SMB", SmbFunction);
-
 };

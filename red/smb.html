@@ -40,6 +40,10 @@ limitations under the License.
             <option value="unlink" data-i18n="smb.operation.unlink"> </option>
             <option value="rename" data-i18n="smb.operation.rename"> </option>
             <option value="create" data-i18n="smb.operation.create"> </option>
+            <option value="mkdir" data-i18n="smb.operation.mkdir"> </option>
+            <option value="rmdir" data-i18n="smb.operation.rmdir"> </option>
+            <option value="exists" data-i18n="smb.operation.exists"> </option>
+            <option value="ensure-dir" data-i18n="smb.operation.ensure-dir"> </option>
         </select>
     </div>
 
@@ -67,57 +71,108 @@ limitations under the License.
     </p>
     
     <h3>Input</h3>
-    <dl class="message-properties">
-        <dt>payload
-            <span class="property-type">string | object</span>
-        </dt>
-        <dd>triggers the action defined in the operation.</dd>
-    </dl>
+        <dl class="message-properties">
+            <dt>payload
+                <span class="property-type">string</span>
+            </dt>
+            <dd>data for file.</dd>
+        </dl>
+    
+        <dl class="message-properties">
+            <dt>filename
+                <span class="property-type">string</span>
+            </dt>
+            <dd>define path file for operations.</dd>
+        </dl>
+
+        <dl class="message-properties">
+            <dt>new_filename
+                <span class="property-type">string</span>
+            </dt>
+            <dd>define new path or file name for Move/Rename operation.</dd>
+        </dl>
 
 
     <h3>Details</h3>
-    <dl class="message-properties">
-        <dt>config
-            <span class="property-type">SMB Config</span>
-        </dt>
-        <dd>the path to operate on.</dd>
-    </dl>
+        <dl class="message-properties">
+            <dt>config
+                <span class="property-type">SMB Config</span>
+            </dt>
+            <dd>the path to operate on.</dd>
+        </dl>
 
 
     <h3>Operations</h3>
+        <dl class="message-properties">
+            <dt>Read directory</dt>
+            <dd>this operation return an array of file object.<br>
+                If not set <code>Path</code> in node properties, then <code>msg.filename</code> is used as Path.
+            </dd>
+        </dl>
 
-    <dl class="message-properties">
+        <dl class="message-properties">
+            <dt>Read file</dt>
+            <dd>
+                this operation return a string with content of file.<br>
+                If not set <code>Path</code> in node properties, then <code>msg.filename</code> is used as Path.
+            </dd>
+        </dl>
 
-        <dt>Read directory</dt>
-        <dd>this operation return an array of file object.
-            If not set <code>Path</code> in node properties then <code>INPUT: msg.payload</code> is used as Path.
-        </dd>
+        <dl class="message-properties">
+            <dt>Remove file</dt>
+            <dd>
+                this operation remove file.<br>
+                If not set <code>Path</code> in node properties, then <code>msg.filename</code> is used as Path.
+            </dd>
+        </dl>
 
-        <dt>Read file</dt>
-        <dd>
-            this operation return a string with content of file.
-            If not set <code>Path</code> in node properties, then <code>INPUT: msg.payload</code> is used as Path.
-        </dd>
+        <dl class="message-properties">
+            <dt>Rename/Move file</dt>
+            <dd>
+                this operation move or rename file.<br>
+                If not set <code>Path</code> or <code>New path</code> in node properties, then <code>msg.filename</code> is used as Path and <code>msg.new_filename</code> is used as New Path.
+            </dd>
+        </dl>
 
-        <dt>Remove file</dt>
-        <dd>
-            this operation remove file.
-            If not set <code>Path</code> in node properties then <code>INPUT: msg.payload</code> is used as Path.
-        </dd>
+        <dl class="message-properties">
+            <dt>Create file</dt>
+            <dd>
+                this operation create new file.<br>
+                If not set <code>Path</code> in node properties, then <code>msg.filename</code> is used as Path and <code>msg.payload</code> is content of file.
+            </dd>
+        </dl>
 
-        <dt>Rename/Move file</dt>
-        <dd>
-            this operation move or rename file.
-            If not set <code>Path</code> and <code>New path</code> in node properties, then <code>INPUT: msg.payload.currently</code> is used as Path and <code>INPUT: msg.payload.new</code> is used as New Path.
-        </dd>
+        <dl class="message-properties">
+            <dt>MKDIR</dt>
+            <dd>
+                this operation create new directory.<br>
+                If not set <code>Path</code> in node properties, then <code>msg.filename</code> is used as Path for new directory.
+            </dd>
+        </dl>
 
-        <dt>Create file</dt>
-        <dd>
-            this operation create new file.
-            If not set <code>Path</code> in node properties, then <code>INPUT: msg.payload.fileName</code> is used as Path and <code>INPUT: msg.payload.data</code> is content of file.
-        </dd>
+        <dl class="message-properties">
+            <dt>RMDIR</dt>
+            <dd>
+                this operation remove directory.<br>
+                If not set <code>Path</code> in node properties, then <code>msg.filename</code> is used as Path for remove directory.
+            </dd>
+        </dl>
 
-    </dl>
+        <dl class="message-properties">
+            <dt>Exists</dt>
+            <dd>
+                this operation test if exist a file.<br>
+                If not set <code>Path</code> in node properties, then <code>msg.filename</code> is used as Path for test.
+            </dd>
+        </dl>
+
+        <dl class="message-properties">
+            <dt>Ensure dir</dt>
+            <dd>
+                this operation tests if the directory exist, if not, this operation will create it.<br>
+                If not set <code>Path</code> in node properties, then <code>msg.filename</code> is used as Path.
+            </dd>
+        </dl>
 
 </script>
 
@@ -180,6 +235,22 @@ limitations under the License.
                     case "create": 
                         operation = "Create";
                         break;
+
+                    case "mkdir":
+                        operation = "MKDIR";
+                        break;
+                    
+                    case "rmdir":
+                        operation = "RMDIR";
+                        break;
+
+                    case "exists":
+                        operation = "Exists";
+                        break;
+                    
+                    case "ensure-dir": 
+                        operation = "Ensure Dir";
+                        break;
                 }
 
                 return selectConfig.label() + " : " + operation;
@@ -210,7 +281,7 @@ limitations under the License.
                     new_path.show();
                 }
             });
-
+            
         }
     });
 </script>

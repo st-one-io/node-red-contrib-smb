@@ -16,7 +16,11 @@
             "read-file": "Read file",
             "unlink": "Remove file",
             "rename": "Rename / Move file",
-            "create": "Create file"
+            "create": "Create file",
+            "mkdir": "MKDIR",
+            "rmdir": "RMDIR",
+            "exists": "Exists",
+            "ensure-dir": "Ensure dir"
         }
     }
 }
