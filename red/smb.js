@@ -293,7 +293,7 @@ module.exports = function (RED) {
 
                 case "rename":
 
-                    let new_filename = msg.new_filename;
+                    let new_filename = node.newPath || msg.new_filename;
 
                     node.statusProcess();
 
@@ -316,9 +316,6 @@ module.exports = function (RED) {
                     let data = msg.payload;
                     
                     node.statusProcess();
-
-                    console.log("DATA: ", data);
-                    console.log("FILENAME: ", filename);
 
                     node.config.writeFile(filename, data, (err) => {
                         
