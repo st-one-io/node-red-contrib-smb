@@ -231,7 +231,13 @@ module.exports = function (RED) {
 
         node.on("input", (msg) => {
 
-            let filename = node.path || msg.filename;
+            let fileName = "";
+
+            if(msg.hasOwnProperty("filename")){
+                fileName = msg.filename;
+            }
+
+            let filename = node.path || fileName;
 
             switch (node.operation) {
 
@@ -293,7 +299,13 @@ module.exports = function (RED) {
 
                 case "rename":
 
-                    let new_filename = node.newPath || msg.new_filename;
+                    let newFileName = "";
+
+                    if(msg.hasOwnProperty("new_filename")){
+                        newFileName = msg.new_filename;
+                    }
+
+                    let new_filename = node.newPath || newFileName;
 
                     node.statusProcess();
 
@@ -313,7 +325,11 @@ module.exports = function (RED) {
 
                 case "create":
 
-                    let data = msg.payload;
+                    let data = "";
+                    
+                    if(msg.hasOwnProperty("payload")){
+                        data = msg.payload;
+                    }                    
                     
                     node.statusProcess();
 
