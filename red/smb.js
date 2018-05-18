@@ -28,18 +28,18 @@ module.exports = function (RED) {
         self.username = self.credentials.username;
         self.password = self.credentials.password;
         self.autoCloseTimeout = 0;
-   
+
         self.on("close", (done) => {
             self.smbClient.close();
             done();
         });
 
-        function connect (){
-            
-            if(self.smbClient){
+        function connect() {
+
+            if (self.smbClient) {
                 self.smbClient.close();
-            }            
-            
+            }
+
             self.smbClient = new SMB({
                 share: self.share,
                 domain: self.domain,
@@ -70,7 +70,9 @@ module.exports = function (RED) {
         };
 
         self.readFile = function readFile(path, callback) {
-            let readFile = self.smbClient.readFile(path, {encoding: "utf8"});
+            let readFile = self.smbClient.readFile(path, {
+                encoding: "utf8"
+            });
 
             readFile.then((data) => {
                 callback(null, data);
@@ -83,13 +85,13 @@ module.exports = function (RED) {
         };
 
         self.unlink = function unlink(path, callback) {
-            
+
             let unlink = self.smbClient.unlink(path);
-            
-            unlink.then(() =>{
+
+            unlink.then(() => {
                 callback(null);
             });
-            
+
             unlink.catch((err) => {
                 callback(err);
                 connect();
@@ -98,7 +100,7 @@ module.exports = function (RED) {
         };
 
         self.rename = function rename(oldPath, newPath, callback) {
-            
+
             let rename = self.smbClient.rename(oldPath, newPath);
 
             rename.then(() => {
@@ -111,7 +113,7 @@ module.exports = function (RED) {
             });
         };
 
-        self.writeFile = function writeFile(fileName, data, callback){
+        self.writeFile = function writeFile(fileName, data, callback) {
 
             let writeFile = self.smbClient.writeFile(fileName, data);
 
@@ -125,7 +127,7 @@ module.exports = function (RED) {
             });
         };
 
-        self.mkdir = function mkdir(path, callback){
+        self.mkdir = function mkdir(path, callback) {
 
             let mkdir = self.smbClient.mkdir(path);
 
@@ -139,7 +141,7 @@ module.exports = function (RED) {
             });
         };
 
-        self.rmdir = function rmdir(path, callback){
+        self.rmdir = function rmdir(path, callback) {
 
             let rmdir = self.smbClient.rmdir(path);
 
@@ -153,7 +155,7 @@ module.exports = function (RED) {
             });
         };
 
-        self.exists = function exists(path, callback){
+        self.exists = function exists(path, callback) {
 
             let exists = self.smbClient.exists(path);
 
@@ -167,7 +169,7 @@ module.exports = function (RED) {
             });
         };
 
-        self.ensureDir = function ensureDir(path, callback){
+        self.ensureDir = function ensureDir(path, callback) {
 
             let ensureDir = self.smbClient.ensureDir(path);
 
@@ -183,8 +185,12 @@ module.exports = function (RED) {
     }
     RED.nodes.registerType("smb config", SmbConfig, {
         credentials: {
-            username: {type:"text"},
-            password: {type:"password"}
+            username: {
+                type: "text"
+            },
+            password: {
+                type: "password"
+            }
         }
     });
 
@@ -205,7 +211,7 @@ module.exports = function (RED) {
             return;
         }
 
-        node.statusProcess = function statusProcess(){
+        node.statusProcess = function statusProcess() {
             node.status({
                 fill: "blue",
                 shape: "dot",
@@ -213,7 +219,7 @@ module.exports = function (RED) {
             });
         };
 
-        node.statusDone = function statusDone(){
+        node.statusDone = function statusDone() {
             node.status({
                 fill: "green",
                 shape: "dot",
@@ -221,7 +227,7 @@ module.exports = function (RED) {
             });
         };
 
-        node.statusError = function statusError(){
+        node.statusError = function statusError() {
             node.status({
                 fill: "red",
                 shape: "dot",
@@ -233,7 +239,7 @@ module.exports = function (RED) {
 
             let fileName = "";
 
-            if(msg.hasOwnProperty("filename")){
+            if (msg.hasOwnProperty("filename")) {
                 fileName = msg.filename;
             }
 
@@ -246,8 +252,8 @@ module.exports = function (RED) {
                     node.statusProcess();
 
                     node.config.readDir(filename, (err, files) => {
-                        
-                        if(err){
+
+                        if (err) {
                             node.statusError();
                             node.error(err);
                             return;
@@ -265,8 +271,8 @@ module.exports = function (RED) {
                     node.statusProcess();
 
                     node.config.readFile(filename, (err, data) => {
-                        
-                        if(err){
+
+                        if (err) {
                             node.statusError();
                             node.error(err);
                             return;
@@ -275,8 +281,8 @@ module.exports = function (RED) {
                         node.statusDone();
                         msg.payload = data;
                         node.send(msg);
-                    });       
-                
+                    });
+
                     break;
 
                 case "unlink":
@@ -285,8 +291,8 @@ module.exports = function (RED) {
 
                     node.config.unlink(filename, (err) => {
 
-                        if(err){
-                            node.statusError();                            
+                        if (err) {
+                            node.statusError();
                             node.error(err);
                             return;
                         }
@@ -301,7 +307,7 @@ module.exports = function (RED) {
 
                     let newFileName = "";
 
-                    if(msg.hasOwnProperty("new_filename")){
+                    if (msg.hasOwnProperty("new_filename")) {
                         newFileName = msg.new_filename;
                     }
 
@@ -309,9 +315,9 @@ module.exports = function (RED) {
 
                     node.statusProcess();
 
-                    node.config.rename(filename, new_filename, (err) =>{
-                        
-                        if(err){
+                    node.config.rename(filename, new_filename, (err) => {
+
+                        if (err) {
                             node.statusError();
                             node.error(err);
                             return;
@@ -326,16 +332,16 @@ module.exports = function (RED) {
                 case "create":
 
                     let data = "";
-                    
-                    if(msg.hasOwnProperty("payload")){
+
+                    if (msg.hasOwnProperty("payload")) {
                         data = msg.payload;
-                    }                    
-                    
+                    }
+
                     node.statusProcess();
 
                     node.config.writeFile(filename, data, (err) => {
-                        
-                        if(err){
+
+                        if (err) {
                             node.statusError();
                             node.error(err);
                             return;
@@ -352,8 +358,8 @@ module.exports = function (RED) {
                     node.statusProcess();
 
                     node.config.mkdir(filename, (err) => {
-                        
-                        if(err){
+
+                        if (err) {
                             node.statusError();
                             node.error(err);
                             return;
@@ -370,8 +376,8 @@ module.exports = function (RED) {
                     node.statusProcess();
 
                     node.config.rmdir(filename, (err) => {
-                        
-                        if(err){
+
+                        if (err) {
                             node.statusError();
                             node.error(err);
                             return;
@@ -388,8 +394,8 @@ module.exports = function (RED) {
                     node.statusProcess();
 
                     node.config.exists(filename, (err) => {
-                        
-                        if(err){
+
+                        if (err) {
                             node.statusError();
                             node.error(err);
                             return;
@@ -406,8 +412,8 @@ module.exports = function (RED) {
                     node.statusProcess();
 
                     node.config.ensureDir(filename, (err) => {
-                        
-                        if(err){
+
+                        if (err) {
                             node.statusError();
                             node.error(err);
                             return;
