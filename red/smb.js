@@ -159,8 +159,8 @@ module.exports = function (RED) {
 
             let exists = self.smbClient.exists(path);
 
-            exists.then(() => {
-                callback(null);
+            exists.then((data) => {
+                callback(null, data);
             });
 
             exists.catch((err) => {
@@ -389,7 +389,7 @@ module.exports = function (RED) {
 
                     node.statusProcess();
 
-                    node.config.exists(filename, (err) => {
+                    node.config.exists(filename, (err, data) => {
 
                         if (err) {
                             node.statusError();
@@ -397,6 +397,7 @@ module.exports = function (RED) {
                             return;
                         }
 
+                        msg.exists = data;
                         node.statusDone();
                         node.send(msg);
                     });
