@@ -303,7 +303,7 @@ module.exports = function (RED) {
 
                 case "rename":
 
-                    let new_filename = node.path;
+                    let new_filename = node.newPath;
 
                     if(!new_filename && msg.new_filename !== undefined){
                         new_filename = msg.new_filename;
