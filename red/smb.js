@@ -113,6 +113,11 @@ module.exports = function (RED) {
 
         self.writeFile = function writeFile(fileName, data, callback) {
 
+            if (!(data instanceof Buffer || typeof data === "string")){
+                // force-cast to a string
+                data = (data || "").toString();
+            }
+
             let writeFile = self.smbClient.writeFile(fileName, data);
 
             writeFile.then(() => {
