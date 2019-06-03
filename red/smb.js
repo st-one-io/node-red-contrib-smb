@@ -235,6 +235,9 @@ module.exports = function (RED) {
             });
         };
 
+        // clear status on init
+        node.status({});
+
         node.on("input", (msg) => {
 
             let filename = node.path;
