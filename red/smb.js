@@ -206,7 +206,7 @@ module.exports = function (RED) {
 
 
         if (!node.config) {
-            node.error("SBM not configuration");
+            node.error("Missing or invalid SMB endpoint configuration");
             return;
         }
 
