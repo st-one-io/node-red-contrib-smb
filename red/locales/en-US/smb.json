@@ -9,7 +9,8 @@
             "config": "Config",
             "operation": "Operation",
             "path": "Path",
-            "path-new": "New path"
+            "path-new": "New path",
+            "format": "Output"
         },
         "operation": {
             "read-dir": "Read directory",
@@ -21,6 +22,10 @@
             "rmdir": "RMDIR",
             "exists": "Exists",
             "ensure-dir": "Ensure dir"
+        },
+        "format": {
+            "string": "a UTF-8 String",
+            "binary": "a binary Buffer"
         }
     }
 }

@@ -70,9 +70,7 @@ module.exports = function (RED) {
         };
 
         self.readFile = function readFile(path, callback) {
-            let readFile = self.smbClient.readFile(path, {
-                encoding: "utf8"
-            });
+            let readFile = self.smbClient.readFile(path);
 
             readFile.then((data) => {
                 callback(null, data);
@@ -204,6 +202,7 @@ module.exports = function (RED) {
         node.operation = values.operation;
         node.path = values.path;
         node.newPath = values.path_new;
+        node.format = values.format || "string";
 
 
         if (!node.config) {
@@ -277,6 +276,10 @@ module.exports = function (RED) {
                             node.statusError();
                             node.error(err);
                             return;
+                        }
+
+                        if (node.format === "string") {
+                            data = data.toString();
                         }
 
                         node.statusDone();

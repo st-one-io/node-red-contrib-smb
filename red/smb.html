@@ -63,6 +63,17 @@ limitations under the License.
         <input type="text" id="node-input-path_new" data-i18n="[placeholder]smb.label.path-new">
     </div>
 
+    <div class="form-row" id="smb-output-format">
+        <label for="node-input-format">
+            <i class="fa fa-sign-out"></i>
+            <span data-i18n="smb.label.format"></span>
+        </label>
+        <select type="text" id="node-input-format">
+            <option value="string" data-i18n="smb.format.string"></option>
+            <option value="binary" data-i18n="smb.format.binary"></option>
+        </select>
+    </div>
+
 </script>
 
 <script type="text/x-red" data-help-name="SMB">
@@ -218,6 +229,9 @@ limitations under the License.
             },
             path_new: {
                 value: ""
+            },
+            format: {
+                value: "string"
             }
 
         },
@@ -285,25 +299,29 @@ limitations under the License.
         oneditprepare: function () {
 
             let new_path = $("#new-path");
+            let format = $("#smb-output-format");
             let operation_select = $("#node-input-operation");
 
-            new_path.hide();
-
-            if (operation_select.val() == "rename") {
-                new_path.show();
-            } else {
-                new_path.hide();
+            if (this.format === undefined) {
+                this.format = "string";
             }
 
-            operation_select.change(function () {
+            function onOperationChange() {
 
                 new_path.hide();
+                format.hide();
 
-                if (operation_select.val() == "rename") {
+                var operationVal = operation_select.val();
+
+                if (operationVal == "rename") {
                     new_path.show();
+                } else if (operationVal === "read-file") {
+                    format.show();
                 }
-            });
+            }
 
+            operation_select.change(onOperationChange);
+            onOperationChange();
         }
     });
 </script>
