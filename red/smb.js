@@ -25,8 +25,8 @@ module.exports = function (RED) {
 
         self.share = values.share;
         self.domain = values.domain || ".";
-        self.username = self.credentials.username;
-        self.password = self.credentials.password;
+        self.username = self.credentials.username || "";
+        self.password = self.credentials.password || "";
         self.autoCloseTimeout = 0;
 
         self.on("close", (done) => {
