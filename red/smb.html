@@ -14,19 +14,11 @@ limitations under the License.
 <script type="text/x-red" data-template-name="SMB">
 
     <div class="form-row">
-        <label for="node-input-name">
-            <i class="fa fa-tag"></i>
-            <span data-i18n="smb.label.name"></span>
-        </label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]smb.label.name">
-    </div>
-
-    <div class="form-row">
         <label for="node-input-config">
             <i class="fa fa-cog"></i>
             <span data-i18n="smb.label.config"></span>
         </label>
-        <input type="text" id="node-input-config" data-i18n="[placeholder]smb.label.config">
+        <input type="text" id="node-input-config">
     </div>
 
     <div class="form-row">
@@ -52,7 +44,7 @@ limitations under the License.
             <i class="fa fa-folder-open"></i>
             <span data-i18n="smb.label.path"></span>
         </label>
-        <input type="text" id="node-input-path" data-i18n="[placeholder]smb.label.path">
+        <input type="text" id="node-input-path" data-i18n="[placeholder]smb.placeholder.path">
     </div>
 
     <div class="form-row" id="new-path">
@@ -60,7 +52,7 @@ limitations under the License.
             <i class="fa fa-folder-open"></i>
             <span data-i18n="smb.label.path-new"></span>
         </label>
-        <input type="text" id="node-input-path_new" data-i18n="[placeholder]smb.label.path-new">
+        <input type="text" id="node-input-path_new" data-i18n="[placeholder]smb.placeholder.path-new">
     </div>
 
     <div class="form-row" id="smb-output-format">
@@ -74,138 +66,96 @@ limitations under the License.
         </select>
     </div>
 
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="smb.label.name"></span>
+        </label>
+        <input type="text" id="node-input-name">
+    </div>
+
 </script>
 
 <script type="text/x-red" data-help-name="SMB">
     <p>
-        <b>Node SMB Protocol</b>
+        Implements the SMB protocol and their operations, used
+        to read and write to shared folders on Windows&reg;
     </p>
 
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>payload
-            <span class="property-type">string</span>
+            <span class="property-type">string|Buffer</span>
         </dt>
-        <dd>data for file.</dd>
-    </dl>
+        <dd>
+            the (optional) content of the created file
+            when using the <code>Create File</code> operation.
+        </dd>
 
-    <dl class="message-properties">
         <dt>filename
             <span class="property-type">string</span>
         </dt>
-        <dd>define path file for operations.</dd>
-    </dl>
+        <dd>
+            if not set in the configuration of the node, this defines 
+            the path for the operation.
+        </dd>
 
-    <dl class="message-properties">
         <dt>new_filename
             <span class="property-type">string</span>
         </dt>
-        <dd>define new path or file name for Move/Rename operation.</dd>
+        <dd>
+            if not set in the configuration of the node, this defines 
+            the new path for the <code>Rename / Move file</code> operation.
+        </dd>
     </dl>
 
 
     <h3>Details</h3>
-    <dl class="message-properties">
-        <dt>config
-            <span class="property-type">SMB Config</span>
-        </dt>
-        <dd>the path to operate on.</dd>
-    </dl>
+    <p>
+        The action performed by the node depends on the operation
+        selected on the configuration, among the following options:
+    </p>
+    <ul>
+        <li>
+            <b>Read directory:</b> Lists the content of the provided 
+            path, returning an Array on <code>msg.payload</code> with
+            all the files and folders of the directory
+        </li>
+        <li>
+            <b>Read file:</b> Reads the content of the file on the
+            provided path. The output format can be selected between
+            a UTF-8 formatted string or the raw Buffer 
+        </li>
+        <li>
+            <b>Remove file:</b> Removes the file/folder provided by
+            the path
+        </li>
+        <li>
+            <b>Rename/Move file:</b> Renames or moves a file/folder,
+            by changing it location from the original provided path
+            to the new provided path
+        </li>
+        <li>
+            <b>Create file:</b> Creates a file on the provided path
+            with the (optional) content of <code>msg.payload</code>
+        </li>
+        <li>
+            <b>Create directory:</b> Creates a new directory on the provided path
+        </li>
+        <li>
+            <b>Remove directory:</b> Removes the directory on the provided path
+        </li>
+        <li>
+            <b>Exists:</b> Returns on <code>msg.exists</code> whether
+            the provided path exists on the target
+        </li>
+        <li>
+            <b>Ensure dir:</b> Tests if the a directory exists on the
+            provided path, creating it (and its parents) in the case
+            it doesn't exists
+        </li>
 
-
-    <h3>Operations</h3>
-    <dl class="message-properties">
-        <dt>Read directory</dt>
-        <dd>this operation return an array of file object.
-            <br> If not set
-            <code>Path</code> in node properties, then
-            <code>msg.filename</code> is used as Path.
-        </dd>
-    </dl>
-
-    <dl class="message-properties">
-        <dt>Read file</dt>
-        <dd>
-            this operation return a string with content of file.
-            <br> If not set
-            <code>Path</code> in node properties, then
-            <code>msg.filename</code> is used as Path.
-        </dd>
-    </dl>
-
-    <dl class="message-properties">
-        <dt>Remove file</dt>
-        <dd>
-            this operation remove file.
-            <br> If not set
-            <code>Path</code> in node properties, then
-            <code>msg.filename</code> is used as Path.
-        </dd>
-    </dl>
-
-    <dl class="message-properties">
-        <dt>Rename/Move file</dt>
-        <dd>
-            this operation move or rename file.
-            <br> If not set
-            <code>Path</code> or
-            <code>New path</code> in node properties, then
-            <code>msg.filename</code> is used as Path and
-            <code>msg.new_filename</code> is used as New Path.
-        </dd>
-    </dl>
-
-    <dl class="message-properties">
-        <dt>Create file</dt>
-        <dd>
-            this operation create new file.
-            <br> If not set
-            <code>Path</code> in node properties, then
-            <code>msg.filename</code> is used as Path and
-            <code>msg.payload</code> is content of file.
-        </dd>
-    </dl>
-
-    <dl class="message-properties">
-        <dt>MKDIR</dt>
-        <dd>
-            this operation create new directory.
-            <br> If not set
-            <code>Path</code> in node properties, then
-            <code>msg.filename</code> is used as Path for new directory.
-        </dd>
-    </dl>
-
-    <dl class="message-properties">
-        <dt>RMDIR</dt>
-        <dd>
-            this operation remove directory.
-            <br> If not set
-            <code>Path</code> in node properties, then
-            <code>msg.filename</code> is used as Path for remove directory.
-        </dd>
-    </dl>
-
-    <dl class="message-properties">
-        <dt>Exists</dt>
-        <dd>
-            this operation test if exist a file.
-            <br> If not set
-            <code>Path</code> in node properties, then
-            <code>msg.filename</code> is used as Path for test.
-            <br>Output: <code>msg.exists</code>.
-        </dd>
-    </dl>
-
-    <dl class="message-properties">
-        <dt>Ensure dir</dt>
-        <dd>
-            this operation tests if the directory exist, if not, this operation will create it.
-            <br> If not set
-            <code>Path</code> in node properties, then
-            <code>msg.filename</code> is used as Path.
-        </dd>
-    </dl>
+    </ul>
 
 </script>
 
@@ -248,48 +198,10 @@ limitations under the License.
             var selectConfig = RED.nodes.node(this.config);
 
             if (selectConfig) {
-
-                let operation = "";
-
-                switch (this.operation) {
-                    case "read-dir":
-                        operation = "Read dir";
-                        break;
-
-                    case "read-file":
-                        operation = "Read file";
-                        break;
-
-                    case "rename":
-                        operation = "Rename/Move";
-                        break;
-
-                    case "unlink":
-                        operation = "Remove";
-                        break;
-
-                    case "create":
-                        operation = "Create";
-                        break;
-
-                    case "mkdir":
-                        operation = "MKDIR";
-                        break;
-
-                    case "rmdir":
-                        operation = "RMDIR";
-                        break;
-
-                    case "exists":
-                        operation = "Exists";
-                        break;
-
-                    case "ensure-dir":
-                        operation = "Ensure Dir";
-                        break;
-                }
-
+                let operation = this._("smb.operation." + this.operation);
                 return selectConfig.label() + " : " + operation;
+            } else {
+                return "smb"
             }
 
         },
@@ -333,19 +245,11 @@ limitations under the License.
 <script type="text/x-red" data-template-name="smb config">
 
     <div class="form-row">
-        <label for="node-config-input-name">
-            <i class="fa fa-tag"></i>
-            <span data-i18n="smb.label.name"></span>
-        </label>
-        <input type="text" id="node-config-input-name" data-i18n="[placeholder]smb.label.name">
-    </div>
-
-    <div class="form-row">
         <label for="node-config-input-share">
             <i class="fa fa-sitemap"></i>
             <span data-i18n="smb.label.share"></span>
         </label>
-        <input type="text" id="node-config-input-share" data-i18n="[placeholder]smb.label.share">
+        <input type="text" id="node-config-input-share" data-i18n="[placeholder]smb.placeholder.share">
     </div>
 
     <div class="form-row">
@@ -353,7 +257,7 @@ limitations under the License.
             <i class="fa fa-globe"></i>
             <span data-i18n="smb.label.domain"></span>
         </label>
-        <input type="text" id="node-config-input-domain" data-i18n="[placeholder]smb.label.domain">
+        <input type="text" id="node-config-input-domain" data-i18n="[placeholder]smb.placeholder.domain">
     </div>
 
     <div class="form-row">
@@ -361,7 +265,7 @@ limitations under the License.
             <i class="fa fa-user"></i>
             <span data-i18n="smb.label.username"></span>
         </label>
-        <input type="text" id="node-config-input-username" data-i18n="[placeholder]smb.label.username">
+        <input type="text" id="node-config-input-username" data-i18n="[placeholder]smb.placeholder.username">
     </div>
 
     <div class="form-row">
@@ -369,7 +273,15 @@ limitations under the License.
             <i class="fa fa-key"></i>
             <span data-i18n="smb.label.password"></span>
         </label>
-        <input type="password" id="node-config-input-password" data-i18n="[placeholder]smb.label.password">
+        <input type="password" id="node-config-input-password" data-i18n="[placeholder]smb.placeholder.password">
+    </div>
+
+    <div class="form-row">
+        <label for="node-config-input-name">
+            <i class="fa fa-tag"></i>
+            <span data-i18n="smb.label.name"></span>
+        </label>
+        <input type="text" id="node-config-input-name">
     </div>
 
 
@@ -377,37 +289,36 @@ limitations under the License.
 
 <script type="text/x-red" data-help-name="smb config">
     <p>
-        <b>Node SMB Protocol</b>
+        Defines a connection to a SMB share and its parameters
     </p>
 
     <h3>Details</h3>
-
     <dl class="message-properties">
         <dt>Share
             <span class="property-type">string</span>
         </dt>
-        <dd>define the path sharing.</dd>
-    </dl>
+        <dd>
+            The target to connect to. This usually has the
+            syntax <code>\\address\share</code>
+        </dd>
 
-    <dl class="message-properties">
         <dt>Domain
             <span class="property-type">string</span>
         </dt>
-        <dd>define the domain for authentication.</dd>
-    </dl>
+        <dd>
+            The domain used for the authentication. Leave it
+            empty if the target is not part of a domain
+        </dd>
 
-    <dl class="message-properties">
         <dt>Username
             <span class="property-type">string</span>
         </dt>
-        <dd>define the username for authentication.</dd>
-    </dl>
+        <dd>The username used for authentication</dd>
 
-    <dl class="message-properties">
         <dt>Password
             <span class="property-type">string</span>
         </dt>
-        <dd>define the password for authentication.</dd>
+        <dd>The password used for authentication</dd>
     </dl>
 </script>
 
@@ -435,7 +346,7 @@ limitations under the License.
             }
         },
         label: function () {
-            return this.name || this.share;
+            return this.name || this.share || "smb config";
         }
     });
 </script>

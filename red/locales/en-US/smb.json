@@ -12,14 +12,22 @@
             "path-new": "New path",
             "format": "Output"
         },
+        "placeholder": {
+            "share": "\\\\address\\share",
+            "domain": "domain.local",
+            "username": "username",
+            "password": "password",
+            "path": "some\\path",
+            "path-new": "another\\new\\path"
+        },
         "operation": {
             "read-dir": "Read directory",
             "read-file": "Read file",
             "unlink": "Remove file",
             "rename": "Rename / Move file",
             "create": "Create file",
-            "mkdir": "MKDIR",
-            "rmdir": "RMDIR",
+            "mkdir": "Create directory",
+            "rmdir": "Remove directory",
             "exists": "Exists",
             "ensure-dir": "Ensure dir"
         },
