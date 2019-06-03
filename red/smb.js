@@ -13,7 +13,7 @@ limitations under the License.
 /* jshint node: true, esversion: 6 */
 "use strict";
 
-const SMB = require('@tracker1/smb2');
+const SMB = require('@marsaud/smb2');
 
 module.exports = function (RED) {
 

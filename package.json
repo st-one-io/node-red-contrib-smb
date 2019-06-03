@@ -18,6 +18,6 @@
   "author": "Smart-Tech",
   "license": "Apache-2.0",
   "dependencies": {
-    "@tracker1/smb2": "git+https://github.com/netsmarttech/node-smb2.git"
+    "@marsaud/smb2": "^0.14.0"
   }
 }
