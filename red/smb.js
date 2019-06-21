@@ -30,14 +30,14 @@ module.exports = function (RED) {
         self.autoCloseTimeout = 0;
 
         self.on("close", (done) => {
-            self.smbClient.close();
+            self.smbClient.disconnect();
             done();
         });
 
         function connect() {
 
             if (self.smbClient) {
-                self.smbClient.close();
+                self.smbClient.disconnect();
             }
 
             self.smbClient = new SMB({
