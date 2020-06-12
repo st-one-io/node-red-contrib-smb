@@ -260,7 +260,7 @@ module.exports = function (RED) {
 
                         if (err) {
                             node.statusError();
-                            node.error(err);
+                            node.error(err, msg);
                             return;
                         }
 
@@ -279,7 +279,7 @@ module.exports = function (RED) {
 
                         if (err) {
                             node.statusError();
-                            node.error(err);
+                            node.error(err, msg);
                             return;
                         }
 
@@ -302,7 +302,7 @@ module.exports = function (RED) {
 
                         if (err) {
                             node.statusError();
-                            node.error(err);
+                            node.error(err, msg);
                             return;
                         }
 
@@ -326,7 +326,7 @@ module.exports = function (RED) {
 
                         if (err) {
                             node.statusError();
-                            node.error(err);
+                            node.error(err, msg);
                             return;
                         }
 
@@ -350,7 +350,7 @@ module.exports = function (RED) {
 
                         if (err) {
                             node.statusError();
-                            node.error(err);
+                            node.error(err, msg);
                             return;
                         }
 
@@ -368,7 +368,7 @@ module.exports = function (RED) {
 
                         if (err) {
                             node.statusError();
-                            node.error(err);
+                            node.error(err, msg);
                             return;
                         }
 
@@ -386,7 +386,7 @@ module.exports = function (RED) {
 
                         if (err) {
                             node.statusError();
-                            node.error(err);
+                            node.error(err, msg);
                             return;
                         }
 
@@ -404,7 +404,7 @@ module.exports = function (RED) {
 
                         if (err) {
                             node.statusError();
-                            node.error(err);
+                            node.error(err, msg);
                             return;
                         }
 
@@ -423,7 +423,7 @@ module.exports = function (RED) {
 
                         if (err) {
                             node.statusError();
-                            node.error(err);
+                            node.error(err, msg);
                             return;
                         }
 
