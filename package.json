@@ -1,5 +1,5 @@
 {
-  "name": "node-red-contrib-smb",
+  "name": "@eflexsystems/node-red-contrib-smb",
   "version": "1.2.0",
   "description": "Node of Node-RED for SMB protocol.",
   "main": "index.js",
