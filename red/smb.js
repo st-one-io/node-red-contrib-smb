@@ -15,6 +15,19 @@ limitations under the License.
 
 const SMB = require('@marsaud/smb2');
 
+/**
+ * Handles pre-1.0 Node-RED gracefully
+ */
+function nrInputShim(node, fn) {
+    function doErr(msg) { return (err) => err && node.error(err, msg) }
+    function doSend() { node.send.apply(node, arguments) }
+    node.on('input', function (msg, send, done) {
+        send = send || doSend;
+        done = done || doErr;
+        fn(msg, send, done);
+    });
+}
+
 module.exports = function (RED) {
 
     function SmbConfig(values) {
@@ -242,7 +255,7 @@ module.exports = function (RED) {
         // clear status on init
         node.status({});
 
-        node.on("input", (msg) => {
+        function onNewMsg(msg, send, done) {
 
             let filename = node.path;
 
@@ -255,18 +268,18 @@ module.exports = function (RED) {
                 case "read-dir":
 
                     node.statusProcess();
-
                     node.config.readDir(filename, (err, files) => {
 
                         if (err) {
                             node.statusError();
-                            node.error(err, msg);
+                            done(err);
                             return;
                         }
 
                         node.statusDone();
                         msg.payload = files;
-                        node.send(msg);
+                        send(msg);
+                        done();
                     });
 
                     break;
@@ -274,12 +287,11 @@ module.exports = function (RED) {
                 case "read-file":
 
                     node.statusProcess();
-
                     node.config.readFile(filename, (err, data) => {
 
                         if (err) {
                             node.statusError();
-                            node.error(err, msg);
+                            done(err);
                             return;
                         }
 
@@ -289,7 +301,8 @@ module.exports = function (RED) {
 
                         node.statusDone();
                         msg.payload = data;
-                        node.send(msg);
+                        send(msg);
+                        done();
                     });
 
                     break;
@@ -297,17 +310,17 @@ module.exports = function (RED) {
                 case "unlink":
 
                     node.statusProcess();
-
                     node.config.unlink(filename, (err) => {
 
                         if (err) {
                             node.statusError();
-                            node.error(err, msg);
+                            done(err);
                             return;
                         }
 
                         node.statusDone();
-                        node.send(msg);
+                        send(msg);
+                        done();
                     });
 
                     break;
@@ -315,23 +328,22 @@ module.exports = function (RED) {
                 case "rename":
 
                     let new_filename = node.newPath;
-
                     if(!new_filename && msg.new_filename !== undefined){
                         new_filename = msg.new_filename;
                     }
 
                     node.statusProcess();
-
                     node.config.rename(filename, new_filename, (err) => {
 
                         if (err) {
                             node.statusError();
-                            node.error(err, msg);
+                            done(err);
                             return;
                         }
 
                         node.statusDone();
-                        node.send(msg);
+                        send(msg);
+                        done();
                     });
 
                     break;
@@ -339,23 +351,22 @@ module.exports = function (RED) {
                 case "create":
 
                     let data = "";
-
                     if (msg.hasOwnProperty("payload")) {
                         data = msg.payload;
                     }
 
                     node.statusProcess();
-
                     node.config.writeFile(filename, data, (err) => {
 
                         if (err) {
                             node.statusError();
-                            node.error(err, msg);
+                            done(err);
                             return;
                         }
 
                         node.statusDone();
-                        node.send(msg);
+                        send(msg);
+                        done();
                     });
 
                     break;
@@ -363,17 +374,17 @@ module.exports = function (RED) {
                 case "mkdir":
 
                     node.statusProcess();
-
                     node.config.mkdir(filename, (err) => {
 
                         if (err) {
                             node.statusError();
-                            node.error(err, msg);
+                            done(err);
                             return;
                         }
 
                         node.statusDone();
-                        node.send(msg);
+                        send(msg);
+                        done();
                     });
 
                     break;
@@ -381,17 +392,17 @@ module.exports = function (RED) {
                 case "rmdir":
 
                     node.statusProcess();
-
                     node.config.rmdir(filename, (err) => {
 
                         if (err) {
                             node.statusError();
-                            node.error(err, msg);
+                            done(err);
                             return;
                         }
 
                         node.statusDone();
-                        node.send(msg);
+                        send(msg);
+                        done();
                     });
 
                     break;
@@ -399,18 +410,18 @@ module.exports = function (RED) {
                 case "exists":
 
                     node.statusProcess();
-
                     node.config.exists(filename, (err, data) => {
 
                         if (err) {
                             node.statusError();
-                            node.error(err, msg);
+                            done(err);
                             return;
                         }
 
                         msg.exists = data;
                         node.statusDone();
-                        node.send(msg);
+                        send(msg);
+                        done();
                     });
 
                     break;
@@ -418,23 +429,24 @@ module.exports = function (RED) {
                 case "ensure-dir":
 
                     node.statusProcess();
-
                     node.config.ensureDir(filename, (err) => {
 
                         if (err) {
                             node.statusError();
-                            node.error(err, msg);
+                            done(err);
                             return;
                         }
 
                         node.statusDone();
-                        node.send(msg);
+                        send(msg);
+                        done();
                     });
 
                     break;
             }
 
-        });
+        }
+        nrInputShim(node, onNewMsg);
     }
     RED.nodes.registerType("SMB", SmbFunction);
 };
