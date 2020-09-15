@@ -15,7 +15,7 @@
       "SMB": "red/smb.js"
     }
   },
-  "author": "Smart-Tech",
+  "author": "ST-One Ltda.",
   "license": "Apache-2.0",
   "dependencies": {
     "@marsaud/smb2": "^0.14.0"
