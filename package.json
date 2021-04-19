@@ -1,7 +1,7 @@
 {
-  "name": "@eflexsystems/node-red-contrib-smb",
+  "name": "node-red-contrib-smb",
   "version": "1.2.0",
-  "description": "Node of Node-RED for SMB protocol.",
+  "description": "Node-RED for the SMB protocol",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +15,7 @@
       "SMB": "red/smb.js"
     }
   },
-  "author": "Smart-Tech",
+  "author": "ST-One Ltda.",
   "license": "Apache-2.0",
   "dependencies": {
     "@marsaud/smb2": "^0.17.1"
