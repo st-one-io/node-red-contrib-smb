@@ -261,6 +261,14 @@ limitations under the License.
     </div>
 
     <div class="form-row">
+        <label for="node-config-input-timeout">
+            <i class="fa fa-clock-o"></i>
+            <span data-i18n="smb.label.timeout"></span>
+        </label>
+        <input type="number" id="node-config-input-timeout" data-i18n="[placeholder]smb.placeholder.timeout">
+    </div>
+
+    <div class="form-row">
         <label for="node-config-input-username">
             <i class="fa fa-user"></i>
             <span data-i18n="smb.label.username"></span>
@@ -310,6 +318,14 @@ limitations under the License.
             empty if the target is not part of a domain
         </dd>
 
+        <dt>Timeout
+            <span class="property-type">number</span>
+        </dt>
+        <dd>
+            The timeout in milliseconds before closing the
+            SMB session and the socket. default: <code>0</code>
+        </dd>
+
         <dt>Username
             <span class="property-type">string</span>
         </dt>
@@ -335,6 +351,9 @@ limitations under the License.
             },
             domain: {
                 value: ""
+            },
+            timeout: {
+              value: 0
             }
         },
         credentials: {
