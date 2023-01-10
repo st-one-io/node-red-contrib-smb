@@ -187,7 +187,26 @@ module.exports = function (RED) {
 
         self.ensureDir = function ensureDir(path, callback) {
 
-            let ensureDir = self.smbClient.ensureDir(path);
+            async function customEnsureDir() {
+                if (await self.smbClient.exists(path)) return null; //fast path, folder already exist
+
+                let parts = path.split('\\').map((e,i,a) => a.slice(0,i+1).join('\\'));
+                for (const part of parts) {
+                    try {
+                        await self.smbClient.mkdir(part);
+                    } catch (e) {
+                        if(e && e.code == 'STATUS_OBJECT_NAME_COLLISION') {
+                            continue;
+                        } else {
+                            throw e;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            let ensureDir = self.smbClient.ensureDir ? self.smbClient.ensureDir(path) : customEnsureDir();
 
             ensureDir.then(() => {
                 callback(null);
