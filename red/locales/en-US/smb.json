@@ -4,6 +4,7 @@
             "name": "Name",
             "share": "Share",
             "domain": "Domain",
+            "timeout": "Timeout",
             "username": "Username",
             "password": "Password",
             "config": "Config",
@@ -15,6 +16,7 @@
         "placeholder": {
             "share": "\\\\address\\share",
             "domain": "domain.local",
+            "timeout": "0",
             "username": "username",
             "password": "password",
             "path": "some\\path",

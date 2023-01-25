@@ -40,7 +40,7 @@ module.exports = function (RED) {
         self.domain = values.domain || ".";
         self.username = self.credentials.username || "";
         self.password = self.credentials.password || "";
-        self.autoCloseTimeout = 0;
+        self.autoCloseTimeout = values.timeout || 0;
 
         self.on("close", (done) => {
             self.smbClient.disconnect();
@@ -58,7 +58,7 @@ module.exports = function (RED) {
                 domain: self.domain,
                 username: self.username,
                 password: self.password,
-                autoCloseTimeout: 0
+                autoCloseTimeout: self.autoCloseTimeout
             });
         }
 
